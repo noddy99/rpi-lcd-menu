@@ -1,3 +1,7 @@
+from unittest import async_case
+import asyncio
+
+
 class BaseMenu(object):
     """
     A generic menu
@@ -10,14 +14,18 @@ class BaseMenu(object):
         self.parent = parent
         self.current_option = 0
         self.selected_option = -1
+    async def async_init(self):
+        return self
+    def __await__(self):    
+        return self.async_init().__await__()
 
-    def start(self):
+    async def start(self):
         """
         Start and render menu
         """
         self.current_option = 0
         self.selected_option = -1
-        self.render()
+        await self.render()
 
         return self
 
@@ -42,19 +50,19 @@ class BaseMenu(object):
         self.items.append(item)
         return self
 
-    def render(self):
+    async def render(self):
         """
         Render menu
         """
         pass
 
-    def clearDisplay(self):
+    async def clearDisplay(self):
         """
         Clear the screen/
         """
         pass
 
-    def processUp(self):
+    async def processUp(self):
         """
         User triggered up event
         """
@@ -62,10 +70,10 @@ class BaseMenu(object):
             self.current_option = len(self.items) - 1
         else:
             self.current_option -= 1
-        self.render()
+        await self.render()
         return self
 
-    def processDown(self):
+    async def processDown(self):
         """
         User triggered down event
         """
@@ -73,22 +81,22 @@ class BaseMenu(object):
             self.current_option = 0
         else:
             self.current_option += 1
-        self.render()
+        await self.render()
         return self
 
-    def processEnter(self):
+    async def processEnter(self):
         """
         User triggered enter event
         """
-        action_result = self.items[self.current_option].action()
+        action_result = await self.items[self.current_option].action()
         if isinstance(action_result, BaseMenu):
             return action_result
         return self
 
-    def exit(self):
+    async def exit(self):
         """
         exit submenu and return parent
         """
         if self.parent is not None:
-            self.parent.render()
+            await self.parent.render()
         return self.parent

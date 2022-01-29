@@ -20,8 +20,8 @@ class MessageItem(MenuItem):
         if menu:
             self.view.parent = menu
 
-    def action(self):
+    async def action(self):
         """
         On MessageItem click
         """
-        return self.view.start()
+        return await self.view.start()

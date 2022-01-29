@@ -14,6 +14,11 @@ class SubmenuItem(MenuItem):
         self.submenu = submenu
         if menu:
             self.submenu.parent = menu
+    
+    async def async_init(self):
+        return self
+    def __await__(self):    
+        return self.async_init().__await__()
 
     def action(self):
         """

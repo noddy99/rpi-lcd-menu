@@ -34,7 +34,7 @@ class MenuItem(object):
         """
         pass
 
-    def action(self):
+    async def action(self):
         """
         Override to carry out the main action for this item.
         """

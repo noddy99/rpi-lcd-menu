@@ -28,7 +28,7 @@ class FunctionItem(MenuItem):
 
         self.returned_value = None
 
-    def action(self):
+    async def action(self):
         """
         This class overrides this method
         """

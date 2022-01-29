@@ -13,3 +13,4 @@ coverage
 docs/build
 .idea
 *.egg-info
+*.toml

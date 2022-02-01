@@ -20,35 +20,35 @@ class MessageView(RpiLCDSubMenu):
 
         super(MessageView, self).__init__(base_menu)
 
-    def render(self):
+    async def render(self):
         """
         Render menu
         """
         self.clearDisplay()
 
         if self.scrollable:
-            self.message(get_scrolled_text(self.text, self.line_index))
+            await self.message(get_scrolled_text(self.text, self.line_index))
         else:
-            self.message(self.text)
+            await self.message(self.text)
 
         return self
 
-    def processUp(self):
+    async def processUp(self):
         if self.line_index > 0 and self.scrollable:
             self.line_index -= 1
-            self.render()
+            await self.render()
 
         return self
 
-    def processDown(self):
+    async def processDown(self):
         if self.line_index < self.text_lines - 1 and self.scrollable:
             self.line_index += 1
-            self.render()
+            await self.render()
 
         return self
 
-    def processEnter(self):
-        return self.exit()
+    async def processEnter(self):
+        return await self.exit()
 
     def setText(self, text):
         self.text = text

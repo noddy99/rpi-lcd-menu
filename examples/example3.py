@@ -8,14 +8,15 @@ from rpilcdmenu import *
 from rpilcdmenu.items import *
 
 
-def main():
+async def main():
     menu = RpiLCDMenu()
-    menu.setup(26, 19, [13, 6, 5, 19])
+    await menu.setup(26, 19, [13, 6, 5, 19])
     function_item1 = FunctionItem("Item 1", fooFunction, [1])
     function_item2 = FunctionItem("Item 2", fooFunction, [2])
     menu.append_item(function_item1).append_item(function_item2)
 
     submenu = RpiLCDSubMenu(menu)
+    await submenu.setup()
     submenu_item = SubmenuItem("SubMenu (3)", submenu, menu)
     menu.append_item(submenu_item)
 
@@ -25,15 +26,22 @@ def main():
 
     menu.append_item(FunctionItem("Item 4", fooFunction, [4]))
 
-    menu.start()
+    await menu.start()
     menu.debug()
     print("----")
     # press first menu item and scroll down to third one
-    menu.processEnter().processDown().processDown()
+    await menu.processEnter()
+    await menu.processDown()
+    await menu.processDown()
     # enter submenu, press Item 32, press Back button
-    menu.processEnter().processDown().processEnter().processDown().processEnter()
+    await menu.processEnter()
+    await menu.processDown()
+    await menu.processEnter()
+    await menu.processDown()
+    await menu.processEnter()
     # press item4 back in the menu
-    menu.processDown().processEnter()
+    await menu.processDown()
+    await menu.processEnter()
 
 
 def fooFunction(item_index):

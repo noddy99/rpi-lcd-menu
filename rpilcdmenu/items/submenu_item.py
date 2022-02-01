@@ -15,8 +15,8 @@ class SubmenuItem(MenuItem):
         if menu:
             self.submenu.parent = menu
 
-    def action(self):
+    async def action(self):
         """
         On Subitem click
         """
-        return self.submenu.start()
+        return await self.submenu.start()

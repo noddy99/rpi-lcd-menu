@@ -9,7 +9,7 @@ class RpiLCDMenu(BaseMenu):
         """
         super(self.__class__, self).__init__()
 
-    def setup(self, pin_rs=26, pin_e=19, pins_db=[13, 6, 5, 21], GPIO=None):
+    def setup(self, pin_rs=26, pin_e=19, pins_db=[13, 6, 5, 19], GPIO=None):
         self.lcd = RpiLCDHwd()
         self.lcd.setup(pin_rs, pin_e, pins_db, GPIO)
         self.lcd.initDisplay()

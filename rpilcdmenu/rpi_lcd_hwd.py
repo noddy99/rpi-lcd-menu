@@ -51,7 +51,7 @@ class RpiLCDHwd:
         """
       
 
-    def setup(self, pin_rs=26, pin_e=19, pins_db=[13, 6, 5, 21], GPIO=None):
+    def setup(self, pin_rs=26, pin_e=19, pins_db=[13, 6, 5, 19], GPIO=None):
         if not GPIO:
             import RPi.GPIO as GPIO
             GPIO.setwarnings(False)

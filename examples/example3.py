@@ -9,8 +9,8 @@ from rpilcdmenu.items import *
 
 
 def main():
-    menu = RpiLCDMenu(26, 19, [13, 6, 5, 21])
-
+    menu = RpiLCDMenu()
+    menu.setup(26, 19, [13, 6, 5, 19])
     function_item1 = FunctionItem("Item 1", fooFunction, [1])
     function_item2 = FunctionItem("Item 2", fooFunction, [2])
     menu.append_item(function_item1).append_item(function_item2)

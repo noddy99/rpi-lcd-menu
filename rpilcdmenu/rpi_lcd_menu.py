@@ -10,8 +10,10 @@ class RpiLCDMenu(BaseMenu):
         super(self.__class__, self).__init__()
 
     async def setup(self, pin_rs=26, pin_e=19, pins_db=[13, 6, 5, 9], GPIO=None):
-        self.lcd = RpiLCDHwd()
-        await self.lcd.setup(pin_rs, pin_e, pins_db, GPIO)
+        if 'lcd' not in dir(self):
+            print("LCD HWD obj does not exist: creating now")
+            self.lcd = RpiLCDHwd()
+            await self.lcd.setup(pin_rs, pin_e, pins_db, GPIO)
         await self.lcd.initDisplay()
         await self.clearDisplay()
 

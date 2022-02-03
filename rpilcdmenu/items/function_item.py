@@ -1,3 +1,4 @@
+import asyncio
 from .menu_item import MenuItem
 
 
@@ -28,12 +29,16 @@ class FunctionItem(MenuItem):
 
         self.returned_value = None
 
-    def action(self):
+    async def action(self):
         """
         This class overrides this method
         """
-        self.returned_value = self.function(*self.args, **self.kwargs)
-        return self.returned_value
+        if asyncio.iscoroutinefunction(self.function):
+            self.returned_value = await self.function(*self.args, **self.kwargs)
+            return self.returned_value
+        else:
+            self.returned_value = self.function(*self.args, **self.kwargs)
+            return self.returned_value
 
     def get_return(self):
         """

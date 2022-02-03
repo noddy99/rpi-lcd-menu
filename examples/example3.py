@@ -4,13 +4,15 @@
 multi level menu
 """
 
+# from msilib.schema import Class
 from rpilcdmenu import *
 from rpilcdmenu.items import *
-
+import asyncio
+import time
 
 async def main():
     menu = RpiLCDMenu()
-    await menu.setup(26, 19, [13, 6, 5, 19])
+    await menu.setup(26, 19, [13, 6, 5, 9])
     function_item1 = FunctionItem("Item 1", fooFunction, [1])
     function_item2 = FunctionItem("Item 2", fooFunction, [2])
     menu.append_item(function_item1).append_item(function_item2)
@@ -30,20 +32,53 @@ async def main():
     menu.debug()
     print("----")
     # press first menu item and scroll down to third one
-    await menu.processEnter()
-    await menu.processDown()
-    await menu.processDown()
+    # print(await menu.processEnter())
+    # print(await menu.processDown())
+    # await menu.processDown()
     # enter submenu, press Item 32, press Back button
-    await menu.processEnter()
-    await menu.processDown()
-    await menu.processEnter()
-    await menu.processDown()
-    await menu.processEnter()
-    # press item4 back in the menu
-    await menu.processDown()
-    await menu.processEnter()
+    # entermenu = await menu.processEnter()
+    # menudown = await entermenu.processDown()
+   
+    control = Controls(menu)
+    await control.down()
+    time.sleep(2)
+    await control.enter()  # press item 2
+    await control.down()
+    await control.enter() # press item 3
+    await control.enter()
+    await control.down() # move to back item in sub
+    await control.enter()
+    await control.down()
+    await control.down()
+    await control.up() 
+    await control.enter()
+    time.sleep(2)
+    await control.down() 
+    time.sleep(2)
+    await control.down() 
+    time.sleep(2)
+    await control.down() 
+    time.sleep(2)
+    await control.enter() # exit sub
+    await control.down() 
+    await control.down()  # MOVE TO ITEM 1
+    await control.enter() # PRESS ITEM 1
 
+class Controls(object):
 
+    def __init__(self,menu) -> None:
+        self.currentmenu = menu
+        super().__init__()
+
+    async def down(self):
+        await self.currentmenu.processDown()
+        
+    async def up(self):
+        await self.currentmenu.processUp()
+    async def enter(self):
+        self.currentmenu = await self.currentmenu.processEnter()
+
+        
 def fooFunction(item_index):
     """
 	sample method with a parameter
@@ -51,9 +86,10 @@ def fooFunction(item_index):
     print("item %d pressed" % (item_index))
 
 
-def exitSubMenu(submenu):
-    return submenu.exit()
+async def exitSubMenu(submenu):
+    return await submenu.exit()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
+    time.sleep(30)

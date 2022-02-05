@@ -3,17 +3,20 @@ from rpilcdmenu.rpi_lcd_hwd import RpiLCDHwd
 
 
 class RpiLCDMenu(BaseMenu):
-    def __init__(self, pin_rs=26, pin_e=19, pins_db=[13, 6, 5, 21], GPIO=None):
+    
+    def __init__(self):
         """
         Initialize menu
         """
+        super(self.__class__, self).__init__()
 
-        self.lcd = RpiLCDHwd(pin_rs, pin_e, pins_db, GPIO)
-
+    def setup(self, pin_rs=26, pin_e=19, pins_db=[13, 6, 5, 9], GPIO=None):
+        if 'lcd' not in dir(self):
+            print("LCD HWD obj does not exist: creating now")
+            self.lcd = RpiLCDHwd()
+            self.lcd.setup(pin_rs, pin_e, pins_db, GPIO)
         self.lcd.initDisplay()
         self.clearDisplay()
-
-        super(self.__class__, self).__init__()
 
     def clearDisplay(self):
         """

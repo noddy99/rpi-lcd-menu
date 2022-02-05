@@ -45,14 +45,13 @@ class RpiLCDHwd:
     LCD_5x10DOTS = 0x04
     LCD_5x8DOTS = 0x00
 
-    def __init__(self, pin_rs=26, pin_e=19, pins_db=[13, 6, 5, 21], GPIO=None):
+    def __init__(self):
         """
         LCD GPIO configuration
         """
-        if not GPIO:
-            import RPi.GPIO as GPIO
-            GPIO.setwarnings(False)
-
+    
+    def setup(self, pin_rs=26, pin_e=19, pins_db=[13, 6, 5, 9], GPIO=None):
+        
         self.GPIO = GPIO
         self.pin_rs = pin_rs
         self.pin_e = pin_e
@@ -61,13 +60,15 @@ class RpiLCDHwd:
         self.displaycontrol = None
         self.displayfunction = None
         self.displaymode = None
-
-        self.GPIO.setmode(GPIO.BCM)
-        self.GPIO.setup(self.pin_rs, GPIO.OUT)
-        self.GPIO.setup(self.pin_e, GPIO.OUT)
-
+        if not GPIO:
+            import pigpio 
+            self.GPIO = pigpio.pi('192.168.1.138', 8888)
+            # self.GPIO('192.168.1.138', 8888)
+        self.GPIO.set_mode(self.pin_rs, pigpio.OUTPUT)
+        self.GPIO.set_mode(self.pin_e, pigpio.OUTPUT)
+        
         for pin in self.pins_db:
-            self.GPIO.setup(pin, GPIO.OUT)
+            self.GPIO.set_mode(pin, pigpio.OUTPUT)
 
     def initDisplay(self):
         self.write4bits(0x33)  # initialization
@@ -89,24 +90,24 @@ class RpiLCDHwd:
 
     def write4bits(self, bits, char_mode=False):
         """ Send command to LCD """
-        self.delayMicroseconds(1000)  # 1000 microsecond sleep
+        self.delayMicroseconds(1)  # 1000 microsecond sleep
         bits = bin(bits)[2:].zfill(8)
-        self.GPIO.output(self.pin_rs, char_mode)
+        self.GPIO.write(self.pin_rs, char_mode)
         for pin in self.pins_db:
-            self.GPIO.output(pin, False)
+            self.GPIO.write(pin, False)
 
         for i in range(4):
             if bits[i] == "1":
-                self.GPIO.output(self.pins_db[::-1][i], True)
+                self.GPIO.write(self.pins_db[::-1][i], True)
 
         self.pulseEnable()
 
         for pin in self.pins_db:
-            self.GPIO.output(pin, False)
+            self.GPIO.write(pin, False)
 
         for i in range(4, 8):
             if bits[i] == "1":
-                self.GPIO.output(self.pins_db[::-1][i - 4], True)
+                self.GPIO.write(self.pins_db[::-1][i - 4], True)
 
         self.pulseEnable()
 
@@ -119,11 +120,11 @@ class RpiLCDHwd:
         return self
 
     def pulseEnable(self):
-        self.GPIO.output(self.pin_e, False)
+        self.GPIO.write(self.pin_e, False)
         self.delayMicroseconds(1)  # 1 microsecond pause - enable pulse must be > 450ns
-        self.GPIO.output(self.pin_e, True)
+        self.GPIO.write(self.pin_e, True)
         self.delayMicroseconds(1)  # 1 microsecond pause - enable pulse must be > 450ns
-        self.GPIO.output(self.pin_e, False)
+        self.GPIO.write(self.pin_e, False)
         self.delayMicroseconds(1)  # commands need > 37us to settle
 
         return self
